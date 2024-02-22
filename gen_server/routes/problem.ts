@@ -8,6 +8,8 @@ import {
     sortByDifficulty,
     sortByTitle,
 } from "../utils/utils";
+import GenerateProblem from "../core/generate_problem";
+import PromptService from "../core/prompt/prompt_service";
 
 const problem = express.Router();
 
@@ -251,6 +253,15 @@ problem.get("/:name/editorial", async (req, res) => {
     } catch (e) {
         console.log(e);
     }
+});
+
+problem.post("generate", async (req, res) => {
+    const difficulty = "Medium";
+    const dataStructures = ["Array"];
+    const programmingLanguage = "python";
+    const generateProblem = GenerateProblem(
+        PromptService()
+    )
 });
 
 export default problem;
