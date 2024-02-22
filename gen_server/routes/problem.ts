@@ -258,10 +258,12 @@ problem.get("/:name/editorial", async (req, res) => {
 problem.post("generate", async (req, res) => {
     const difficulty = "Medium";
     const dataStructures = ["Array"];
+    const dataAlgorithms = ["Binary Search"];
     const programmingLanguage = "python";
-    const generateProblem = GenerateProblem(
-        PromptService()
+    const generateProblem : GenerateProblem = new GenerateProblem(
+        new PromptService()
     )
+    await generateProblem.generateLeetcodeQuestion(difficulty, dataStructures, dataAlgorithms, programmingLanguage);
 });
 
 export default problem;

@@ -1,3 +1,4 @@
+import { ChatCompletion, ChatCompletionMessage } from "openai/resources";
 import PromptService from "./prompt/prompt_service";
 
 interface LeetCodeQuestion {
@@ -13,8 +14,9 @@ class GenerateProblem {
         this.__promptService = promptService;
     }
 
-    async generateLeetcodeQuestion(difficulty: string, dataStructures: string[], programmingLanguage: string): Promise<any> {
+    async generateLeetcodeQuestion(difficulty: string, dataStructures: string[], dataAlgorithms: string[], programmingLanguage: string): Promise<string> {
         const dataStructuresStr = dataStructures.join(", ");
+        const dataAlgorithmsStr = dataAlgorithms.join(", ");
         const jsonSchema: LeetCodeQuestion = {
           challenge: "",
           entry_function: "",
@@ -25,6 +27,7 @@ class GenerateProblem {
         const prompt = `As an intelligent Leetcode Builder API, given the following criteria:
       - Difficulty: ${difficulty}
       - Data Structures: ${dataStructuresStr}
+      - Data Algorithms: ${dataAlgorithmsStr}
       - Programming Language: ${programmingLanguage}
       
       Create a leetcode question, make it a random scenario where the solution should involve the data structure for the best solution.
@@ -39,8 +42,17 @@ class GenerateProblem {
       ${jsonSchemaStr}
       
       Please fill in the schema with appropriate values based on the criteria. Ensure the response strictly adheres to the given schema format.`;
+        
+        const chatCompletion : ChatCompletion = await this.__promptService.complete_prompt_system(prompt); 
       
-        return (await this.__promptService.complete_prompt_system(prompt)).choices[0];
+        //Choose first index
+        const chatCompletionMessage : ChatCompletionMessage = chatCompletion.choices[0].message
+
+        if (chatCompletionMessage.content == null) {
+          throw new Error("Content message is empty")
+        }
+
+        return chatCompletionMessage.content;
       }      
 }
 
